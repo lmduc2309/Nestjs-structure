@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-// import { UpdateUserDto } from './dto/update-user.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { User, UserDocument } from './entities/user.entity';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -9,23 +9,28 @@ export class UsersService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
-  // create(createUserDto: CreateUserDto) {
-  //   return 'This action adds a new user';
-  // }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    return await this.userModel.find();
   }
 
   async findOne(email: string): Promise<User> {
     return await this.userModel.findOne({ email: email });
   }
 
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userModel.findOneAndReplace(
+      { _id: id },
+      updateUserDto,
+      { new: true },
+    );
+    if (!updateUserDto) {
+      throw new NotFoundException();
+    }
+    return user;
+  }
 
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  async remove(id: string): Promise<User> {
+    return await this.userModel.findByIdAndRemove(id);
+  }
 }

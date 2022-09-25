@@ -46,7 +46,7 @@ export class AuthService {
     }
   }
 
-  async login(user: UserDocument): Promise<any> {
+  async login(user: User): Promise<any> {
     const payload: PayLoadJwtDto = { email: user.email, sub: user._id };
     return this.generateToken({
       email: payload.email,

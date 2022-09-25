@@ -36,7 +36,18 @@ async function bootstrap() {
   if (corsConfig.enabled) {
     app.enableCors();
   }
+  // Cookie
+  app.use(cookieParser(process.env.JWT_SECRET));
+  // Sesion
+  app.use(
+    session({
+      secret: process.env.JWT_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: { maxAge: 3600000 },
+    }),
+  );
 
-  await app.listen(process.env.PORT || nestConfig.port || 3000);
+  await app.listen(process.env.PORT || nestConfig.port);
 }
 bootstrap();

@@ -10,6 +10,7 @@ import { PasswordService } from './password.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from 'src/users/entities/user.entity';
 import { LocalStrategy } from './local-guard/local.strategy';
+import { SessionSerializer } from './session/session.serializer';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -27,7 +28,13 @@ import { LocalStrategy } from './local-guard/local.strategy';
       inject: [ConfigService],
     }),
   ],
-  providers: [AuthService, PasswordService, JwtStrategy, LocalStrategy],
+  providers: [
+    AuthService,
+    PasswordService,
+    JwtStrategy,
+    LocalStrategy,
+    SessionSerializer,
+  ],
   controllers: [AuthController],
 })
 export class AuthModule {}
