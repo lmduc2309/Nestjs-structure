@@ -15,8 +15,8 @@ const config: Config = {
     path: 'api',
   },
   security: {
-    expiresIn: '1d',
-    refreshIn: '7d',
+    expiresIn: 7200,
+    refreshIn: 604800,
     bcryptSaltOrRound: 10,
   },
 };

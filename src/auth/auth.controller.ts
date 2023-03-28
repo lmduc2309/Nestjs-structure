@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CreateUserDto } from './dto/signup.dto';
 import { TokenInterceptor } from './interceptors/token.interceptors';
 import { LocalAuthGuard } from './local-guard/local-auth.guard';
@@ -23,7 +24,12 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @UseInterceptors(TokenInterceptor)
-  login(@Request() req, @Body() login: LoginDto): any {
+  async login(@Request() req, @Body() login: LoginDto) {
     return this.authService.login(req.user);
+  }
+
+  @Post('refreshtoken')
+  async refreshToken(@Body() payload: RefreshTokenDto) {
+    return this.authService.refreshToken(payload);
   }
 }

@@ -10,7 +10,7 @@ export class UsersService {
     @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
   ) {}
 
-  async findAll() {
+  async findAll(): Promise<User[]> {
     return await this.userModel.find();
   }
 
@@ -30,7 +30,7 @@ export class UsersService {
     return user;
   }
 
-  async remove(id: string): Promise<User> {
+  async remove(id: string): Promise<any> {
     return await this.userModel.findByIdAndRemove(id);
   }
 }

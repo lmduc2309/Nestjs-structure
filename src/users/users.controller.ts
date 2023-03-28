@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { User } from './entities/user.entity';
+import { User } from './entities/user.entity';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/jwt-guard/jwt-auth.guard';
 import { SessionAuthGuard } from 'src/auth/session/session-auth.guard';
@@ -19,41 +19,29 @@ import { SessionAuthGuard } from 'src/auth/session/session-auth.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get('test')
-  @UseGuards(JwtAuthGuard, SessionAuthGuard)
-  @ApiBearerAuth()
-  testAuthRoute() {
-    return {
-      message: 'You did it!',
-    };
-  }
-  // @Post()
-  // create(@Body() createUserDto: CreateUserDto) {
-  //   return this.usersService.create(createUserDto);
-  // }
   @UseGuards(JwtAuthGuard, SessionAuthGuard)
   @ApiBearerAuth()
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
   }
   @UseGuards(JwtAuthGuard, SessionAuthGuard)
   @ApiBearerAuth()
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.usersService.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard, SessionAuthGuard)
   @ApiBearerAuth()
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return await this.usersService.update(id, updateUserDto);
   }
   @UseGuards(JwtAuthGuard, SessionAuthGuard)
   @ApiBearerAuth()
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.usersService.remove(id);
   }
 }

@@ -15,6 +15,7 @@ import { SecurityConfig } from 'src/configs/config.interface';
 import { CreateUserDto } from './dto/signup.dto';
 import { User, UserDocument } from 'src/users/entities/user.entity';
 import { PayLoadJwtDto } from './dto/payload-jwt.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -93,10 +94,13 @@ export class AuthService {
     };
   }
 
-  refreshToken(token: string) {
+  refreshToken(payload: RefreshTokenDto) {
     try {
-      const { email, sub } = this.jwtService.verify(token);
-
+      const { email, sub } = this.jwtService.verify(payload.refreshToken);
+      console.log(email, sub);
+      if (email !== payload.email) {
+        throw new UnauthorizedException('Invalid token');
+      }
       return this.generateToken({
         email,
         sub,
