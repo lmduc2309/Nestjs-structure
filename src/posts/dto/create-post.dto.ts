@@ -1,11 +1,45 @@
-import { ApiProperty } from '@nestjs/swagger';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsArray,
+  IsEnum,
+} from 'class-validator';
+import { PostStatus } from '../schemas/post.schema';
+
 export class CreatePostDto {
-  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   title: string;
 
-  @ApiProperty()
+  @IsNotEmpty()
+  @IsString()
   content: string;
 
-  @ApiProperty()
-  author: string;
+  @IsOptional()
+  @IsArray()
+  tags?: string[];
+
+  @IsOptional()
+  @IsString()
+  category?: string;
+
+  @IsOptional()
+  @IsArray()
+  images?: string[];
+
+  @IsOptional()
+  @IsArray()
+  videos?: string[];
+
+  @IsOptional()
+  @IsEnum(PostStatus)
+  status?: PostStatus;
+
+  @IsOptional()
+  seoMetadata?: {
+    metaTitle?: string;
+    metaDescription?: string;
+    canonicalUrl?: string;
+  };
 }

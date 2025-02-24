@@ -1,55 +1,91 @@
+// src/posts/posts.controller.ts
 import {
   Controller,
   Get,
   Post,
   Body,
-  Patch,
+  Put,
   Param,
   Delete,
   UseGuards,
-  UseInterceptors,
+  Query,
+  Request,
+  HttpCode,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { JwtAuthGuard } from 'src/auth/jwt-guard/jwt-auth.guard';
-import { SessionAuthGuard } from 'src/auth/session/session-auth.guard';
-import { ApiBearerAuth } from '@nestjs/swagger';
-import { TransformInterceptor } from 'src/helpers/ResponseFormat';
+import { JwtAuthGuard } from '../auth/jwt-guard/jwt-auth.guard';
+import { PostStatus } from './schemas/post.schema';
 
 @Controller('posts')
-@UseInterceptors(TransformInterceptor)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @UseGuards(JwtAuthGuard, SessionAuthGuard)
-  @ApiBearerAuth()
   @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  @UseGuards(JwtAuthGuard)
+  create(@Body() createPostDto: CreatePostDto, @Request() req) {
+    return this.postsService.create(createPostDto, req.user.sub);
   }
-  @UseGuards(JwtAuthGuard, SessionAuthGuard)
-  @ApiBearerAuth()
+
   @Get()
-  findAll() {
-    return this.postsService.findAll();
+  findAll(@Query() query: any) {
+    return this.postsService.findAll(query);
   }
-  @UseGuards(JwtAuthGuard, SessionAuthGuard)
-  @ApiBearerAuth()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(id);
+
+  @Get('user/:userId')
+  getUserPosts(
+    @Param('userId') userId: string,
+    @Query('status') status?: PostStatus,
+  ) {
+    return this.postsService.getUserPosts(userId, status);
   }
-  @UseGuards(JwtAuthGuard, SessionAuthGuard)
-  @ApiBearerAuth()
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(id, updatePostDto);
+
+  @Get(':idOrSlug')
+  findOne(@Param('idOrSlug') idOrSlug: string) {
+    return this.postsService.findOne(idOrSlug);
   }
-  @UseGuards(JwtAuthGuard, SessionAuthGuard)
-  @ApiBearerAuth()
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  update(
+    @Param('id') id: string,
+    @Body() updatePostDto: UpdatePostDto,
+    @Request() req,
+  ) {
+    return this.postsService.update(id, updatePostDto, req.user.sub);
+  }
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(id);
+  @UseGuards(JwtAuthGuard)
+  remove(@Param('id') id: string, @Request() req) {
+    return this.postsService.remove(id, req.user.sub);
+  }
+
+  @Post(':id/like')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  likePost(@Param('id') id: string, @Request() req) {
+    return this.postsService.likePost(id, req.user.sub);
+  }
+
+  @Post(':id/bookmark')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  bookmarkPost(@Param('id') id: string, @Request() req) {
+    return this.postsService.bookmarkPost(id, req.user.sub);
+  }
+
+  @Post(':id/view')
+  @HttpCode(200)
+  incrementViewCount(@Param('id') id: string) {
+    return this.postsService.incrementViewCount(id);
+  }
+
+  @Post(':id/featured')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
+  toggleFeatured(@Param('id') id: string, @Request() req) {
+    return this.postsService.toggleFeatured(id, req.user.sub);
   }
 }

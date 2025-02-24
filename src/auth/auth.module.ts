@@ -8,9 +8,11 @@ import { ConfigService } from '@nestjs/config';
 import { SecurityConfig } from 'src/configs/config.interface';
 import { PasswordService } from './password.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from 'src/users/entities/user.entity';
+import { User, UserSchema } from 'src/users/schemas/user.schema';
 import { LocalStrategy } from './local-guard/local.strategy';
 import { SessionSerializer } from './session/session.serializer';
+import { GoogleStrategy } from './google-guard/google.strategy';
+import { FacebookStrategy } from './facebook-guard/facebook.strategy';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -32,6 +34,8 @@ import { SessionSerializer } from './session/session.serializer';
     AuthService,
     PasswordService,
     JwtStrategy,
+    GoogleStrategy,
+    FacebookStrategy,
     LocalStrategy,
     SessionSerializer,
   ],

@@ -8,7 +8,7 @@ import type { Response } from 'express';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import type { UserDocument } from 'src/users/entities/user.entity';
+import type { UserDocument } from 'src/users/schemas/user.schema';
 import { AuthService } from '../auth.service';
 
 @Injectable()
